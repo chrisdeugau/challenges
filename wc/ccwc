@@ -2,17 +2,20 @@
 
 import argparse, sys
 
-def wc_count(filename):
+def wc_count(file):
     bytes = 0
     lines = 0
     words = 0
     chars = 0
-    with open(filename, 'r') as f:
-        for line in f:
-            bytes += len(line.encode('utf-8'))
-            lines += 1
-            words += len(line.split())
-            chars += len(line)
+    while True:
+        line = file.readline()
+        if not line:
+            break
+
+        bytes += len(line.encode('utf-8'))
+        lines += 1
+        words += len(line.split())
+        chars += len(line)
 
     rv = {"bytes": bytes, "lines": lines, "words": words, "chars": chars}
     return rv
@@ -24,14 +27,18 @@ parser.add_argument('-c', help='count the number of bytes in a file', action="st
 parser.add_argument('-l', help='count the number of lines in a file', action="store_true")
 parser.add_argument('-w', help='count the number of words in a file', action="store_true")
 parser.add_argument('-m', help='count the number of characters in a file', action="store_true")
-parser.add_argument('filename', help='file name to run ccwc on')
+parser.add_argument('file', nargs='?', help='Input file, if empty stdin is used', type=argparse.FileType('r'), default=sys.stdin)
 args = parser.parse_args()
 
+if args.file.isatty():
+    parser.print_help()
+    exit(0)
+
 defaultArgs = False
-if (len(sys.argv) == 2):
+if (len(sys.argv) == 1):
     defaultArgs = True
 
-rv = wc_count(args.filename)
+rv = wc_count(args.file)
 outputString = ""
 
 if (args.l or defaultArgs):
@@ -47,4 +54,4 @@ if (args.m):
     countChars = rv['chars']
     outputString = outputString + f'{countChars:>8}'
 
-print(f'{outputString} {args.filename}')
+print(f'{outputString} {args.file.name}')
