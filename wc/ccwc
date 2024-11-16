@@ -1,0 +1,50 @@
+#!/usr/bin/python3
+
+import argparse, sys
+
+def wc_count(filename):
+    bytes = 0
+    lines = 0
+    words = 0
+    chars = 0
+    with open(filename, 'r') as f:
+        for line in f:
+            bytes += len(line.encode('utf-8'))
+            lines += 1
+            words += len(line.split())
+            chars += len(line)
+
+    rv = {"bytes": bytes, "lines": lines, "words": words, "chars": chars}
+    return rv
+
+# start main program execution
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-c', help='count the number of bytes in a file', action="store_true")
+parser.add_argument('-l', help='count the number of lines in a file', action="store_true")
+parser.add_argument('-w', help='count the number of words in a file', action="store_true")
+parser.add_argument('-m', help='count the number of characters in a file', action="store_true")
+parser.add_argument('filename', help='file name to run ccwc on')
+args = parser.parse_args()
+
+defaultArgs = False
+if (len(sys.argv) == 2):
+    defaultArgs = True
+
+rv = wc_count(args.filename)
+outputString = ""
+
+if (args.l or defaultArgs):
+    countLines = rv['lines']
+    outputString = outputString + f'{countLines:>8}'
+if (args.w or defaultArgs):
+    countWords = rv['words']
+    outputString = outputString + f'{countWords:>8}'
+if (args.c or defaultArgs):
+    countBytes = rv['bytes']
+    outputString = outputString + f'{countBytes:>8}'
+if (args.m):
+    countChars = rv['chars']
+    outputString = outputString + f'{countChars:>8}'
+
+print(f'{outputString} {args.filename}')
