@@ -1,0 +1,67 @@
+#!/usr/bin/python3
+
+import argparse, sys
+import heapq
+
+class TreeNode:
+    def __init__(self, weight, value):
+        self.left = None
+        self.right = None
+        self.weight = weight
+        self.value = value
+    def PrintTree(self):
+        if self.left:
+            self.left.PrintTree()
+        print(self.weight, self.value)
+        if self.right:
+            self.right.PrintTree()
+    def __lt__(self, obj):
+        return self.value < obj.value
+
+def huffman_algo(chars):
+    huffmanTrees = []
+
+    for char, weight in chars.items():
+        node = TreeNode(weight, char)
+        heapq.heappush(huffmanTrees, (weight, node))
+
+    while len(huffmanTrees) > 1:
+        left = heapq.heappop(huffmanTrees)
+        right = heapq.heappop(huffmanTrees)
+
+        newWeight = left[0] + right[0]
+        newNode = TreeNode(newWeight, '')
+        newNode.left = left[1]
+        newNode.right = right[1]
+
+        heapq.heappush(huffmanTrees, (newWeight, newNode))
+
+    final = heapq.heappop(huffmanTrees)
+    finalTree = final[1]
+
+    return finalTree
+
+def count_chars(file):
+    char_dict = {}
+
+    for line in file:
+        for x in line:
+            if x in char_dict:
+                char_dict[x] += 1
+            else:
+                char_dict[x] = 1
+
+    return char_dict
+
+def main_func():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('file', help='Input file, if empty stdin is used', type=argparse.FileType('r'))
+    args = parser.parse_args()
+
+    print("Hello Chris, we're working on ", args.file.name)
+    chars = count_chars(args.file)
+
+    huffmanTree = huffman_algo(chars)
+
+# main function execution
+main_func()
