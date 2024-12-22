@@ -41,6 +41,7 @@ def huffman_algo(chars):
 
     return finalTree
 
+# return a dictionary with a count of all of the characters in a file
 def count_chars(file):
     char_dict = {}
 
@@ -53,6 +54,14 @@ def count_chars(file):
 
     return char_dict
 
+def build_table(table, tree, path):
+    if tree.left:
+        build_table(table, tree.left, path + "0")
+    if tree.right:
+        build_table(table, tree.right, path + "1")
+    if tree.value:
+        table[tree.value] = path
+
 def main_func():
     parser = argparse.ArgumentParser()
     parser.add_argument('file', help='Input file, if empty stdin is used', type=argparse.FileType('r'))
@@ -61,7 +70,14 @@ def main_func():
     print("Hello Chris, we're working on ", args.file.name)
     chars = count_chars(args.file)
 
+    # create a huffman tree for the given charcter counts
     huffmanTree = huffman_algo(chars)
+
+    # create a huffman encoding map
+    encoding_map = {}
+    build_table(encoding_map, huffmanTree, "")
+
+    print(encoding_map)
 
 # main function execution
 main_func()
