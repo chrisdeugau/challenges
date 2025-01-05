@@ -6,3 +6,8 @@ This repo contains some work I've done on the coding challenges available at htt
 https://codingchallenges.fyi/challenges/challenge-wc
 
 Version of wc written in Python
+
+## cut
+https://codingchallenges.fyi/challenges/challenge-cut
+
+Version of cut written in Java
