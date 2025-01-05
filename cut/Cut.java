@@ -3,33 +3,52 @@ import java.util.ArrayList;
 
 class Cut {
     public static void main(String[] args) {
-
-        // parse the file into memory
         BufferedReader br;
         String filename = "";
-        int fieldToPrint = 0;
+        ArrayList<Integer> fieldsToPrint = new ArrayList<Integer>();
         String delim = "\t";
 
+        // need to parse the params for delimiters and fields to print
         for (int i=0; i < args.length; i++) {
-            String flag = args[i].substring(0, 2);
-            String param = args[i].substring(2).trim();
+            String flag;
+            String param;
 
+            // check if our args length is greater than one, or if it's just "-"
+            if (args[i].length() > 1) {
+                flag = args[i].substring(0, 2);
+                param = args[i].substring(2).trim();    
+            } else {
+                flag = "-";
+                param = "";
+            }
+
+            // handle different potential arguments
             if (flag.equals("-f")) {
-                fieldToPrint = Integer.parseInt(param) - 1;
+                String[] splitParams = param.split("[ ,]");
+                for (String part : splitParams) {
+                    fieldsToPrint.add(Integer.parseInt(part) - 1);
+                }
             } else if (flag.equals("-d")) {
                 delim = param;
-            } 
+            } else if (flag.equals("-")) {
+                filename = "";
+            }
             else {
                 filename = args[i];
                 break;
             }
         }
 
-        System.out.println(fieldToPrint + " " + delim + " " + filename);
+        // list of input lines delimitted
         ArrayList<String[]> inputs = new ArrayList<String[]>();
 
         try {
-            br = new BufferedReader(new FileReader(filename));
+            // parse the file into memory
+            if (filename.equals("")) {
+                br = new BufferedReader(new InputStreamReader(System.in));
+            } else {
+                br = new BufferedReader(new FileReader(filename));
+            }
             
             String line = br.readLine();
             while (line != null) {
@@ -39,13 +58,20 @@ class Cut {
                 line = br.readLine();
             }
 
+            // print the correct fields from inputs
             for (String[] curr : inputs) {
-                if (fieldToPrint < curr.length)
-                    System.out.println(curr[fieldToPrint]);
+                for (int i = 0; i < fieldsToPrint.size(); i++) {
+                    if (fieldsToPrint.get(i) < curr.length)
+                        System.out.print(curr[fieldsToPrint.get(i)]);
+                    if (i < fieldsToPrint.size() - 1) {
+                        System.out.print("\t");
+                    } else {
+                        System.out.println();
+                    }
+                }
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        System.out.println("cut command");
     }
 }
