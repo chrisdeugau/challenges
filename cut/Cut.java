@@ -64,7 +64,7 @@ class Cut {
                     if (fieldsToPrint.get(i) < curr.length)
                         System.out.print(curr[fieldsToPrint.get(i)]);
                     if (i < fieldsToPrint.size() - 1) {
-                        System.out.print("\t");
+                        System.out.print(delim);
                     } else {
                         System.out.println();
                     }
